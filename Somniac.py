@@ -24,13 +24,14 @@ import traceback
 import argparse
 import requests
 
-parser = argparse.ArgumentParser(description='Launch bots onto webpages using Somniac. Example command: python hack.py -W http://www.website.com/page.php -N t -E t -C t -X t')
+os.system('COLOR 07')
 
-parser.add_argument('-W', '--website', type=str, metavar='', required=True, help='The website contact/login/signup page URL (eg. http://www.website.com/contact.php)')
-parser.add_argument('-N', '--bname', type=str, metavar='', required=True, help='If the website contact/login/signup page has a name section (eg. t(true) or anything else for false)')
-parser.add_argument('-E', '--bemail', type=str, metavar='', required=True, help='If the website contact/login/signup page has an email section (eg. t(true) or anything else for false)')
-parser.add_argument('-C', '--bcomment', type=str, metavar='', required=True, help='If the website contact/login/signup page has a comment section (eg. t(true) or anything else for false)')
-parser.add_argument('-X', '--bextra', type=str, metavar='', required=True, help='If the website contact/login/signup page has an extra section (eg. t(true) or anything else for false)')
+parser = argparse.ArgumentParser(description='Launch bots onto webpages using Somniac. Example command: python Somniac.py -W http://www.website.com/page.php -N t -E t -C t -X t')
+parser.add_argument('-W', '--website', type=str, metavar='', required=True, help='\033[93mThe website contact/login/signup page URL (eg. http://www.website.com/contact.php)\033[0m')
+parser.add_argument('-N', '--bname', type=str, metavar='', required=True, help='\033[93mIf the website contact/login/signup page has a name section (eg. t(true) or anything else for false)\033[0m')
+parser.add_argument('-E', '--bemail', type=str, metavar='', required=True, help='\033[93mIf the website contact/login/signup page has an email section (eg. t(true) or anything else for false)\033[0m')
+parser.add_argument('-C', '--bcomment', type=str, metavar='', required=True, help='\033[93mIf the website contact/login/signup page has a comment section (eg. t(true) or anything else for false)\033[0m')
+parser.add_argument('-X', '--bextra', type=str, metavar='', required=True, help='\033[93mIf the website contact/login/signup page has an extra section (eg. t(true) or anything else for false)\033[0m')
 
 parser.add_argument('-1', '--sname', type=str, metavar='', required=False, default='name', help='The name of the name section, if the website has a name section (eg. name)')
 parser.add_argument('-2', '--semail', type=str, metavar='', required=False, default='email', help='The name of the email section, if the website has an email section(eg. email)')
@@ -42,42 +43,30 @@ parser.add_argument('-e', '--email', type=str, metavar='', required=False, defau
 parser.add_argument('-c', '--comment', type=str, metavar='', required=False, default='Hello, World!', help='The comment (eg. Hello, World!)')
 parser.add_argument('-x', '--extra', type=str, metavar='', required=False, default='Send', help='The extra data (eg. Send)')
 
-parser.add_argument('-i', '--iterator', type=int, metavar='', required=True, help='The amount of bots to send to the URL (eg. 20)')
-
+parser.add_argument('-i', '--iter', type=int, metavar='', required=True, help='\033[93mThe amount of bots to send to the URL (eg. 20)\033[0m')
 args = parser.parse_args()
 
-os.system('COLOR 07')
+bot_name = bot_email = bot_comment = bot_extra = 'Undefined'
 
 try:
-	print('\033[93m'
-		+ f'User args: URL = {args.website}, Name Section = {args.bname}, Email Section = {args.bemail}, Comment Section = {args.bcomment}, Extra Section = {args.bextra}'
-		+ '\033[0m')
-	
-	bot_name = bot_email = bot_comment = bot_extra = 'Undefined'
-	
+	print(f'\033[93mUser args: URL = {args.website}, Name Section = {args.bname}, Email Section = {args.bemail}, Comment Section = {args.bcomment}, Extra Section = {args.bextra}\033[0m')
+
+	base = ['name', 'email', 'comment', 'extra']
 	reqdict = {}
-	
-	if args.bname == 't':
-		reqdict[args.sname] = args.name
-		bot_name = args.name
-	if args.bemail == 't':
-		reqdict[args.semail] = args.email
-		bot_email = args.email
-	if args.bcomment == 't':
-		reqdict[args.scomment] = args.comment
-		bot_comment = args.comment
-	if args.bextra == 't':
-		reqdict[args.sextra] = args.extra
-		bot_extra = args.extra
-	
-	for i in range(args.iterator):
+
+	for sec in base:
+		if getattr(args, 'b' + sec) == 't':
+			reqdict[getattr(args, 's' + sec)] = getattr(args, sec)
+			exec('bot_' + sec + ' = args.' + sec, globals())
+
+	for i in range(args.iter):
 		requests.post(args.website, allow_redirects=False, data=reqdict)
-		
+
 		if i >= 1:
 			sys.stdout.write("\033[F")
 			sys.stdout.write("\033[K")
-		
+
 		print(f'\033[93mSending \033[91mbot #{i + 1}\033[93m with args: Name = {bot_name}, Email = {bot_email}, Comment = {bot_comment}, Extra = {bot_extra}\033[0m')
 except:
 	traceback.print_exc()
-	input('Press any key to continue...')
+	input('\033[94mPress any key to continue...\033[0m')
