@@ -44,9 +44,9 @@ The bextra argument represents whether or not the site has an extra section. Nor
 
 `(eg. -X t)`
 ```
--i or --iterator
+-i or --iter
 ```
-The iterator argument represents how many times a new 'bot' should be launched
+The iter argument represents how many times a new 'bot' should be launched
 
 `(eg. -i 20)`
 
