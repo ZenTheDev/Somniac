@@ -33,15 +33,15 @@ parser.add_argument('-E', '--bemail', type=str, metavar='', required=True, help=
 parser.add_argument('-C', '--bcomment', type=str, metavar='', required=True, help='\033[93mIf the website contact/login/signup page has a comment section (eg. t(true) or anything else for false)\033[0m')
 parser.add_argument('-X', '--bextra', type=str, metavar='', required=True, help='\033[93mIf the website contact/login/signup page has an extra section (eg. t(true) or anything else for false)\033[0m')
 
-parser.add_argument('-1', '--sname', type=str, metavar='', required=False, default='name', help='The name of the name section, if the website has a name section (eg. name)')
-parser.add_argument('-2', '--semail', type=str, metavar='', required=False, default='email', help='The name of the email section, if the website has an email section(eg. email)')
-parser.add_argument('-3', '--scomment', type=str, metavar='', required=False, default='comment', help='The name of the comment section, if the website has a comment section (eg. comment)')
-parser.add_argument('-4', '--sextra', type=str, metavar='', required=False, default='Submit', help='The name of the extra section, if the website has an extra section (eg. Submit)')
+parser.add_argument('-1', '--sname', type=str, nargs='+', metavar='', required=False, default='name', help='The name of the name section, if the website has a name section (eg. name)')
+parser.add_argument('-2', '--semail', type=str, nargs='+', metavar='', required=False, default='email', help='The name of the email section, if the website has an email section(eg. email)')
+parser.add_argument('-3', '--scomment', type=str, nargs='+', metavar='', required=False, default='comment', help='The name of the comment section, if the website has a comment section (eg. comment)')
+parser.add_argument('-4', '--sextra', type=str, nargs='+', metavar='', required=False, default='Submit', help='The name of the extra section, if the website has an extra section (eg. Submit)')
 
-parser.add_argument('-n', '--name', type=str, metavar='', required=False, default='John Doe', help='The name (eg. John Doe)')
-parser.add_argument('-e', '--email', type=str, metavar='', required=False, default='examplegmail', help='The name part of the email (eg. myemail391, the @gmail.com will automatically be appended)')
-parser.add_argument('-c', '--comment', type=str, metavar='', required=False, default='Hello, World!', help='The comment (eg. Hello, World!)')
-parser.add_argument('-x', '--extra', type=str, metavar='', required=False, default='Send', help='The extra data (eg. Send)')
+parser.add_argument('-n', '--name', type=str, nargs='+', metavar='', required=False, default='John Doe', help='The name (eg. John Doe)')
+parser.add_argument('-e', '--email', type=str, nargs='+', metavar='', required=False, default='examplegmail', help='The name part of the email (eg. myemail391, the @gmail.com will automatically be appended)')
+parser.add_argument('-c', '--comment', type=str, nargs='+', metavar='', required=False, default='Hello, World!', help='The comment (eg. Hello, World!)')
+parser.add_argument('-x', '--extra', type=str, nargs='+', metavar='', required=False, default='Send', help='The extra data (eg. Send)')
 
 parser.add_argument('-i', '--iter', type=int, metavar='', required=True, help='\033[93mThe amount of bots to send to the URL (eg. 20)\033[0m')
 args = parser.parse_args()
@@ -55,6 +55,10 @@ try:
 	reqdict = {}
 
 	for sec in base:
+		if isinstance(getattr(args, 's' + sec), list):
+			setattr(args, 's' + sec, str(' '.join(getattr(args, 's' + sec))))
+		if isinstance(getattr(args, sec), list):
+			setattr(args, sec, str(' '.join(getattr(args, sec))))
 		if getattr(args, 'b' + sec) == 't':
 			reqdict[getattr(args, 's' + sec)] = getattr(args, sec)
 			exec('bot_' + sec + ' = args.' + sec, globals())
